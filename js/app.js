@@ -29,7 +29,11 @@ document.addEventListener("DOMContentLoaded", e => {
     let character = char.textContent;
     if (character === ' ') {
       char.className = 'space';
-    } else if (character === '.' || character === ',' || character === '!' || character === '?') {
+    } else if (character === '.' || 
+               character === ',' || 
+               character === '!' || 
+               character === '?') 
+               {
       char.className = 'punctuation';
     } else {
       char.className = 'letter';
@@ -49,19 +53,27 @@ document.addEventListener("DOMContentLoaded", e => {
   addPhraseToDisplay(phraseArray);
 
   function checkLetter(buttonPressed, letterArray) {
-    if (buttonPressed.tagName === 'BUTTON') {
+    // if (buttonPressed.tagName === 'BUTTON') {
       for (let i = 0; i < letterArray.length; i++) {
-        if (buttonPressed.textContent.toLowerCase() ===  letterArray[i].textContent.toLowerCase())
+        if (buttonPressed ===  letterArray[i].textContent.toLowerCase()) {
         letterArray[i].className = 'show letter';
-      }
-    } else {
-      return null;
-    }
+        }
+      } 
+    // }  
   }
 
   document.addEventListener('click', e => {
     const classLetter = document.getElementsByClassName('letter');
-    const button = e.target;
+    let button = e.target;
+    if (button.tagName === 'BUTTON') {
+      button = button.textContent.toLowerCase();
+      checkLetter(button, classLetter);
+    }
+  });
+
+  document.addEventListener('keyup', e => {
+    const classLetter = document.getElementsByClassName('letter');
+    const button = e.key;
     checkLetter(button, classLetter);
   });
   

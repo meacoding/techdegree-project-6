@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", e => {
   const qwerty = document.getElementById("qwerty");
   const phrase = document.getElementById("phrase");
   let missed = 0;
+  let letterFound;
 
   const btnReset = document.querySelector(".btn__reset");
 
@@ -25,23 +26,24 @@ document.addEventListener("DOMContentLoaded", e => {
   }
   const phraseArray = getRandomPhraseAsArray(phrases);
 
-  function isLetter (char){
+  function isLetter(char) {
     let character = char.textContent;
-    if (character === ' ') {
-      char.className = 'space';
-    } else if (character === '.' || 
-               character === ',' || 
-               character === '!' || 
-               character === '?') 
-               {
-      char.className = 'punctuation';
+    if (character === " ") {
+      char.className = "space";
+    } else if (
+      character === "." ||
+      character === "," ||
+      character === "!" ||
+      character === "?"
+    ) {
+      char.className = "punctuation";
     } else {
-      char.className = 'letter';
+      char.className = "letter";
     }
   }
 
   function addPhraseToDisplay(arr) {
-    let ul = document.getElementById('phrase').firstElementChild;
+    let ul = document.getElementById("phrase").firstElementChild;
     for (let i = 0; i < arr.length; i++) {
       let li = document.createElement("li");
       li.textContent = arr[i];
@@ -53,29 +55,42 @@ document.addEventListener("DOMContentLoaded", e => {
   addPhraseToDisplay(phraseArray);
 
   function checkLetter(buttonPressed, letterArray) {
-    // if (buttonPressed.tagName === 'BUTTON') {
-      for (let i = 0; i < letterArray.length; i++) {
-        if (buttonPressed ===  letterArray[i].textContent.toLowerCase()) {
-        letterArray[i].className = 'show letter';
-        }
-      } 
-    // }  
+    for (let i = 0; i < letterArray.length; i++) {
+      if (buttonPressed === letterArray[i].textContent.toLowerCase()) {
+        letterArray[i].className = "show letter";
+        console.log("buttonPressed", buttonPressed);
+        letterFound = buttonPressed;
+        return letterFound;
+      } else {
+        letterFound = null;
+        return letterFound;
+      }
+    }
+    console.log("letterFound", letterFound);
   }
 
-  document.addEventListener('click', e => {
-    const classLetter = document.getElementsByClassName('letter');
+  document.addEventListener("click", e => {
+    const classLetter = document.getElementsByClassName("letter");
     let button = e.target;
-    if (button.tagName === 'BUTTON') {
+    button.disabled = true;
+    if (button.tagName === "BUTTON") {
+      button.className = "chosen";
       button = button.textContent.toLowerCase();
       checkLetter(button, classLetter);
     }
   });
 
-  document.addEventListener('keyup', e => {
-    const classLetter = document.getElementsByClassName('letter');
+  document.addEventListener("keyup", e => {
+    const classLetter = document.getElementsByClassName("letter");
     const button = e.key;
+    const buttonQuery = document.querySelectorAll("button");
     checkLetter(button, classLetter);
-  });
-  
-});
 
+    for (let i = 0; i < buttonQuery.length; i++) {
+      if (button === buttonQuery[i].textContent) {
+        buttonQuery[i].className = "chosen";
+        buttonQuery[i].disabled = true;
+      }
+    }
+  });
+});

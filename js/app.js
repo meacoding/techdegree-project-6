@@ -1,22 +1,20 @@
 document.addEventListener("DOMContentLoaded", e => {
   const qwerty = document.getElementById("qwerty");
   const phrase = document.getElementById("phrase");
+  const btnReset = document.querySelector(".btn__reset");
   let missed = 0;
   let letterFound;
-
-  const btnReset = document.querySelector(".btn__reset");
-
-  btnReset.addEventListener("click", e => {
-    const overlay = document.getElementById("overlay");
-    overlay.style.display = "none";
-  });
+  let usedLetters = [];
+  const overlay = document.getElementById("overlay");
+  const p = document.createElement("p");
+  overlay.insertBefore(p, btnReset);
 
   const phrases = [
-    "Cat got your tongue?",
-    "what goes around comes around.",
-    "What did Yoshi say to the programmer? Enum!",
-    "Link, open your eyes.",
-    "My toes are pristine!"
+    "Time is money friend",
+    "May the stars guide you",
+    "Daylights burning",
+    "Keep your feet on the ground",
+    "My toes are pristine"
   ];
 
   function getRandomPhraseAsArray(arr) {
@@ -24,19 +22,11 @@ document.addEventListener("DOMContentLoaded", e => {
     let returnedArray = arr[random].split("", arr[random].length);
     return returnedArray;
   }
-  const phraseArray = getRandomPhraseAsArray(phrases);
 
   function isLetter(char) {
     let character = char.textContent;
     if (character === " ") {
       char.className = "space";
-    } else if (
-      character === "." ||
-      character === "," ||
-      character === "!" ||
-      character === "?"
-    ) {
-      char.className = "punctuation";
     } else {
       char.className = "letter";
     }
@@ -51,46 +41,116 @@ document.addEventListener("DOMContentLoaded", e => {
       ul.appendChild(li);
     }
   }
+  function reset() {
+    const overlay = document.getElementById("overlay");
+    btnReset.textContent = "Reset";
+    overlay.style.display = "none";
 
-  addPhraseToDisplay(phraseArray);
-
-  function checkLetter(buttonPressed, letterArray) {
-    for (let i = 0; i < letterArray.length; i++) {
-      if (buttonPressed === letterArray[i].textContent.toLowerCase()) {
-        letterArray[i].className = "show letter";
-        console.log("buttonPressed", buttonPressed);
-        letterFound = buttonPressed;
-        return letterFound;
-      } else {
-        letterFound = null;
-        return letterFound;
-      }
+    let list = document.getElementById("phrase").firstElementChild;
+    while (list.hasChildNodes()) {
+      list.removeChild(list.firstChild);
     }
-    console.log("letterFound", letterFound);
+
+    const tries = document.getElementsByClassName("tries");
+
+    for (let i = missed - 1; i >= 0; i--) {
+      let img = tries[i].children[0];
+      img.style.display = "inline-block";
+      missed = 0;
+    }
+
+    const buttonQuery = document.querySelectorAll("button");
+
+    for (let i = 0; i < buttonQuery.length; i++) {
+      buttonQuery[i].className = "";
+      buttonQuery[i].disabled = false;
+    }
+
+    usedLetters = [];
   }
 
-  document.addEventListener("click", e => {
+  function checkLetter(buttonPressed) {
     const classLetter = document.getElementsByClassName("letter");
+    let count = 0;
+    for (let i = 0; i < classLetter.length; i++) {
+      if (buttonPressed === classLetter[i].textContent.toLowerCase()) {
+        classLetter[i].className = "show letter";
+        letterFound = buttonPressed;
+        count++;
+      }
+    }
+    if (count === 0) {
+      letterFound = null;
+    }
+  }
+
+  function missedGuess() {
+    let tries = document.getElementsByClassName("tries");
+    let img = tries[missed].children[0];
+    if (letterFound === null) {
+      img.style.display = "none";
+      missed++;
+    }
+  }
+
+  function checkWin() {
+    const show = document.getElementsByClassName("show");
+    const letter = document.getElementsByClassName("letter");
+
+    if (missed < 5 && show.length === letter.length) {
+      overlay.style.display = "flex";
+      overlay.className = "win";
+      p.textContent = "You win!";
+    } else if (missed >= 5) {
+      overlay.style.display = "flex";
+      overlay.className = "lose";
+      p.textContent = "You lose!";
+    }
+  }
+
+  btnReset.addEventListener("click", e => {
+    reset();
+    addPhraseToDisplay(getRandomPhraseAsArray(phrases));
+  });
+
+  document.addEventListener("click", e => {
     let button = e.target;
     button.disabled = true;
     if (button.tagName === "BUTTON") {
       button.className = "chosen";
       button = button.textContent.toLowerCase();
-      checkLetter(button, classLetter);
+      console.log(button);
+      usedLetters.push(button.toUpperCase().charCodeAt(0));
+
+      console.log(usedLetters);
+      checkLetter(button);
+      missedGuess();
+      checkWin();
     }
   });
 
   document.addEventListener("keyup", e => {
-    const classLetter = document.getElementsByClassName("letter");
-    const button = e.key;
-    const buttonQuery = document.querySelectorAll("button");
-    checkLetter(button, classLetter);
+    let key = e.which;
+    if (key >= 65 && key <= 90 && !usedLetters.includes(key)) {
+      usedLetters.push(key);
 
-    for (let i = 0; i < buttonQuery.length; i++) {
-      if (button === buttonQuery[i].textContent) {
-        buttonQuery[i].className = "chosen";
-        buttonQuery[i].disabled = true;
+      console.log(usedLetters);
+
+      const button = e.key.toLowerCase();
+      const buttonQuery = document.querySelectorAll("button");
+
+      for (let i = 0; i < buttonQuery.length; i++) {
+        if (button === buttonQuery[i].textContent) {
+          buttonQuery[i].className = "chosen";
+          buttonQuery[i].disabled = true;
+        }
       }
+
+      checkLetter(button);
+      missedGuess();
+      checkWin();
+    } else {
+      e.preventDefault();
     }
   });
 });

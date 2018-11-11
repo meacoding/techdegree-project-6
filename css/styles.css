@@ -27,6 +27,8 @@ body {
   justify-content: space-evenly;
   flex-direction: column;
   display: flex;
+  margin: 0;
+  padding: 10px;
   height: 100vh;
 }
 
@@ -44,6 +46,7 @@ h2 {
   font-family: "Open Sans", sans-serif;
   font-size: var(--font-size-large);
   margin: 0;
+  user-select: none;
 }
 
 button {
@@ -88,10 +91,12 @@ button {
   width: 65px;
   padding: 20px 1px 0 1px;
   margin-right: 2px;
+  margin-bottom: 20px;
   color: transparent;
   background: var(--color-neutral-light);
   /* border-radius: 5px; */
   border-bottom: 4px solid black;
+  transition: background-color 0.5s cubic-bezier(0, 0.15, 0.15, -1);
 }
 
 .space {
@@ -110,11 +115,21 @@ button {
   justify-content: center;
 }
 
+button {
+  height: 50px;
+  width: 50px;
+}
+
 .chosen {
   background: var(--color-neutral);
   border-radius: 5px;
   font-size: var(--font-size-medium);
   color: #ffffff;
+  transition: background-color 0.5s ease-out;
+}
+
+.chosen.wrong {
+  background: tomato;
 }
 
 .btn__reset {
@@ -123,6 +138,13 @@ button {
   background: #ffffff;
   border-radius: 5px;
   font-size: var(--font-size-medium);
+  cursor: pointer;
+}
+
+.btn__reset:hover,
+.btn__reset:active {
+  background: #000;
+  color: #fff;
 }
 
 /* Overlay */
@@ -167,3 +189,5 @@ button {
 .lose a {
   color: var(--color-lose);
 }
+
+/* Transitions */

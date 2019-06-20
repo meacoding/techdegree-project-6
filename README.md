@@ -15,7 +15,7 @@ To build a word game with JavaScript for the Treehouse Techdegree FEWD program.
 
 ## What I did
 
-This project matches the mockup provided with some flourishes. JavaScript drives the interactivity. Per directions, for large screens only.
+JavaScript drives the interactivity. For large screens only. Matches provided mockup with some flourishes.
  
 ## Backstory
 
